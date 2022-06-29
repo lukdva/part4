@@ -11,6 +11,7 @@
   "author": "lukdva",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^28.1.3",
     "jest": "^28.1.1",
     "nodemon": "^2.0.18"
   },
