@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --verbose",
     "dev": "nodemon index.js"
   },
   "author": "lukdva",
   "license": "ISC",
   "devDependencies": {
+    "jest": "^28.1.1",
     "nodemon": "^2.0.18"
   },
   "dependencies": {
@@ -18,5 +19,8 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "mongoose": "^6.4.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
