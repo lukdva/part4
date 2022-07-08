@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+require('express-async-errors');
 const {MONGO_URI} = require('./utils/config')
 const mongoose = require('mongoose')
 const cors = require('cors')
