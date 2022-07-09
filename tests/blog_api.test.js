@@ -35,6 +35,16 @@ test('Blogs are returned in JSON format and a correct number of blogs', async ()
     expect(result.body.length).toEqual(initialBlogs.length)
 })
 
+test.only('Blog post identifiers are named id', async () => {
+    const result = await api
+    .get('/api/blogs')
+    .expect(200)
+
+    console.log(result.body);
+    result.body.forEach(blog => {
+      expect(blog.id).toBeDefined();
+    })
+})
 afterAll(() => {
     mongoose.connection.close();
 });
