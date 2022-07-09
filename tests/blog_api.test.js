@@ -32,6 +32,11 @@ const initialBlogs = [
       author: "Edsger W. Dijkstra",
       url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html"
     }
+  const blogNoUrlTitle =
+    {
+      author: "Robert C. Martin",
+      likes: 10
+    }
 
   beforeEach(async () => {
     await Blog.deleteMany({});
@@ -79,7 +84,7 @@ test('Blog is created with POST method', async () => {
   
 })
 
-test.only('No likes prop defaults to 0', async() => {
+test('No likes prop defaults to 0', async() => {
   const result = await api
   .post('/api/blogs')
   .send(blogNoLikesProp)
@@ -93,6 +98,17 @@ test.only('No likes prop defaults to 0', async() => {
   const dbRecords = await Blog.find({title:blogNoLikesProp.title});
   const processedBlogs = dbRecords.map(r => r.toObject());
   expect(processedBlogs[0].likes).toBe(0);
+})
+
+test.only('No URL and Title returns 400 status', async() => {
+  const result = await api
+  .post('/api/blogs')
+  .send(blogNoUrlTitle)
+  .set('Accept', 'application/json')
+  .expect(400);
+
+  expect(result.body.error).toBeDefined();
+  expect(result.body.error).toBe('bad request')
 })
 
 afterAll(() => {

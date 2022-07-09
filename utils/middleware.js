@@ -8,4 +8,16 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-module.exports = {requestLogger}
+const handleBadRequests = (error ,request, response, next) => {
+  if (error.message === 'bad request') {
+    response.status(400);
+    response.json({ error: error.message });
+  }
+  next()
+}
+
+module.exports = 
+{
+  requestLogger,
+  handleBadRequests
+}
