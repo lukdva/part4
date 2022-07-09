@@ -19,6 +19,13 @@ const initialBlogs = [
       likes: 5
     }
   ]
+  const blogToAdd =
+    {
+      title: "Type wars",
+      author: "Robert C. Martin",
+      url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+      likes: 2
+    }
 
   beforeEach(async () => {
     await Blog.deleteMany({});
@@ -35,7 +42,7 @@ test('Blogs are returned in JSON format and a correct number of blogs', async ()
     expect(result.body.length).toEqual(initialBlogs.length)
 })
 
-test.only('Blog post identifiers are named id', async () => {
+test('Blog post identifiers are named id', async () => {
     const result = await api
     .get('/api/blogs')
     .expect(200)
@@ -44,6 +51,26 @@ test.only('Blog post identifiers are named id', async () => {
     result.body.forEach(blog => {
       expect(blog.id).toBeDefined();
     })
+})
+
+test.only('Blog is created with POST method', async () => {
+  await api
+  .post('/api/blogs')
+  .send(blogToAdd)
+  .set('Accept', 'application/json')
+  .expect('Content-Type', /json/)
+  .expect(201);
+
+  const result = await api.get('/api/blogs');
+  const titles = result.body.map(r => r.title);
+  expect(result.body).toHaveLength(initialBlogs.length + 1)
+  expect(titles).toContain(blogToAdd.title)
+
+  const dbRecords = await Blog.find({title:blogToAdd.title});
+  const processsedBlogs = dbRecords.map(r => r.toObject({transform : (doc, ret) => { delete ret._id; delete ret.__v}}));
+  console.log(processsedBlogs);
+  expect(processsedBlogs[0]).toEqual(blogToAdd);
+  
 })
 afterAll(() => {
     mongoose.connection.close();
