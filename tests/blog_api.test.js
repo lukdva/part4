@@ -26,6 +26,12 @@ const initialBlogs = [
       url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
       likes: 2
     }
+  const blogNoLikesProp =
+    {
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html"
+    }
 
   beforeEach(async () => {
     await Blog.deleteMany({});
@@ -53,7 +59,7 @@ test('Blog post identifiers are named id', async () => {
     })
 })
 
-test.only('Blog is created with POST method', async () => {
+test('Blog is created with POST method', async () => {
   await api
   .post('/api/blogs')
   .send(blogToAdd)
@@ -67,11 +73,28 @@ test.only('Blog is created with POST method', async () => {
   expect(titles).toContain(blogToAdd.title)
 
   const dbRecords = await Blog.find({title:blogToAdd.title});
-  const processsedBlogs = dbRecords.map(r => r.toObject({transform : (doc, ret) => { delete ret._id; delete ret.__v}}));
-  console.log(processsedBlogs);
-  expect(processsedBlogs[0]).toEqual(blogToAdd);
+  const processedBlogs = dbRecords.map(r => r.toObject({transform : (doc, ret) => { delete ret._id; delete ret.__v}}));
+  console.log(processedBlogs);
+  expect(processedBlogs[0]).toEqual(blogToAdd);
   
 })
+
+test.only('No likes prop defaults to 0', async() => {
+  const result = await api
+  .post('/api/blogs')
+  .send(blogNoLikesProp)
+  .set('Accept', 'application/json')
+  .expect('Content-Type', /json/)
+  .expect(201);
+  // expect.
+  console.log(result.body);
+  expect(result.body.likes).toBeDefined();
+
+  const dbRecords = await Blog.find({title:blogNoLikesProp.title});
+  const processedBlogs = dbRecords.map(r => r.toObject());
+  expect(processedBlogs[0].likes).toBe(0);
+})
+
 afterAll(() => {
     mongoose.connection.close();
 });
