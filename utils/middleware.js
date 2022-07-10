@@ -13,6 +13,10 @@ const handleBadRequests = (error ,request, response, next) => {
     response.status(400);
     response.json({ error: error.message });
   }
+  if (error.message === 'not found') {
+    response.status(404);
+    response.json({ error: error.message });
+  }
   next()
 }
 
