@@ -8,20 +8,30 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
-const handleBadRequests = (error ,request, response, next) => {
-  if (error.message.includes('bad request') || error.message.includes('validation failed')) {
-    response.status(400);
-    response.json({ error: error.message });
+const handleBadRequests = (err ,req, res, next) => {
+  if (err.message.includes('bad request') || err.message.includes('validation failed')) {
+    res.status(400);
+    res.json({ error: err.message });
   }
-  if (error.message === 'not found') {
-    response.status(404);
-    response.json({ error: error.message });
+  if (err.message === 'not found') {
+    res.status(404);
+    res.json({ err: err.message });
   }
-  next(error)
+  next(err)
+}
+
+const tokenExtractor = (req, res, next) => {
+  const auth = req.get('authorization');
+  if (auth && auth.toLowerCase().startsWith('bearer '))
+    req.token = auth.substr(7);
+  else
+    req.token = null
+  next();
 }
 
 module.exports = 
 {
   requestLogger,
-  handleBadRequests
+  handleBadRequests,
+  tokenExtractor
 }

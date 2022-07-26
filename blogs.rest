@@ -5,10 +5,10 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "whatever",
+  "title": "Authorization with JWT",
   "author": "Tom Hanks",
-  "url": "http:/localhost:3000",
-  "likes": 21
+  "url": "http:/localhost:3003",
+  "likes": 100
 }
 ###
 PUT http://localhost:3003/api/blogs/62cab87378566c1bb8887fb5
