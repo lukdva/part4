@@ -12,3 +12,20 @@ Content-Type: application/json
 }
 
 ###
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+   "username":"tonyS",
+   "name":"Tony Stark"
+}
+###
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+   "name":"Tony Stark",
+   "password":"tonyP"
+}

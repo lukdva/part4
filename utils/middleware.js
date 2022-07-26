@@ -9,7 +9,7 @@ const requestLogger = (request, response, next) => {
 }
 
 const handleBadRequests = (error ,request, response, next) => {
-  if (error.message === 'bad request') {
+  if (error.message.includes('bad request') || error.message.includes('validation failed')) {
     response.status(400);
     response.json({ error: error.message });
   }
@@ -17,7 +17,7 @@ const handleBadRequests = (error ,request, response, next) => {
     response.status(404);
     response.json({ error: error.message });
   }
-  next()
+  next(error)
 }
 
 module.exports = 

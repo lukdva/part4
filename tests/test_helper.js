@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const initialBlogs = [
     {
@@ -33,7 +34,36 @@ const blogNoUrlTitle =
       author: "Robert C. Martin",
       likes: 10
     }
-
+const initialUsers = [
+  {
+    username: "test1",
+    name: "Test Best",
+    password: "secur1ty"
+  },
+  {
+    username: "jdoe",
+    name: "John Doe",
+    password: "s3cur1ty"
+  }
+]
+const userNoPassword = {
+  username: "noPwHere",
+  name: "Password protection"
+}
+const userNoUsername = {
+  name: "Username Strong",
+  password: "NoUsername"
+}
+const userShortPassword = {
+    username: "shorty",
+    name: "Nate Robinson",
+    password: "s3"
+}
+const userShortUsername = {
+  username: "sh",
+  name: "Yao Ming",
+  password: "s3cur1ty"
+}
 const getBlogsInDB = async (filter = {}, toObjectOps = {}) => {
     const blogs = await Blog.find(filter);
     return blogs.map(blog => blog.toObject(toObjectOps));
@@ -47,11 +77,22 @@ const getNonExistantId = async () => {
     return blog._id.toString();
 }
 
+const getUsersInDB = async (filter = {}, toObjectOps = {}) => {
+  const users = await User.find(filter);
+  return users.map(user => user.toObject(toObjectOps));
+}
+
 module.exports = {
     initialBlogs,
     blogToAdd,
     blogNoLikesProp,
     blogNoUrlTitle,
+    initialUsers,
+    userNoPassword,
+    userNoUsername,
+    userShortPassword,
+    userShortUsername,
     getBlogsInDB,
-    getNonExistantId
+    getNonExistantId,
+    getUsersInDB
 }
