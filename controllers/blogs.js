@@ -12,7 +12,6 @@ blogsRouter.get('/', async (request, response, next) => {
   blogsRouter.post('/', async (request, response) => {
 
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
-    console.log(decodedToken);
     if(!decodedToken.id)
     {
       response.status(401).json({error: 'token is missing or invalid'});
@@ -33,9 +32,20 @@ blogsRouter.get('/', async (request, response, next) => {
   })
 
   blogsRouter.delete('/:id', async (request, response) => {
-    const result = await Blog.findByIdAndDelete(request.params.id);
-    if(result.acknowledged === true && result.deletedCount === 0)
-      throw new Error('not found');
+    const decodedToken = jwt.verify(request.token, process.env.SECRET);
+    const userId = decodedToken.id
+    if(!userId)
+    {
+      response.status(401).json({error: 'token is missing or invalid'});
+    }
+    console.log("decodedToken.id: ", userId)
+    console.log("request.params.id: ",request.params.id)
+    const blog = await Blog.findById(request.params.id);
+    if(!blog)
+      response.status(404).send({error:'not found'})
+    if(blog.user.toString() !== userId)
+      response.status(401).json({error:'You are not the owner of resource'})
+    await blog.remove();
     response.status(204).send();
   })
 
