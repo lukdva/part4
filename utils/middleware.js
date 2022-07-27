@@ -38,7 +38,6 @@ const userExtractor = (req, res, next) => {
     res.status(401).json({error: 'token is missing or invalid'});
   }
   req.user = decodedToken;
-  console.log("REQ.USER", req.user);
   next();
 }
 module.exports = 
