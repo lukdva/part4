@@ -2,13 +2,14 @@ const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
 const logger = require('../utils/logger')
 const User = require('../models/user')
+const middleware = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response, next) => {
     const blogs = await Blog.find({}).populate('user', {username:1, name:1, id:1});
     response.json(blogs);
   })
   
-  blogsRouter.post('/', async (request, response) => {
+  blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     if(!(request.body.url && request.body.title)) 
       throw new Error('bad request'); 
     if (!request.body.likes) 
@@ -22,10 +23,8 @@ blogsRouter.get('/', async (request, response, next) => {
     response.status(201).json(result);
   })
 
-  blogsRouter.delete('/:id', async (request, response) => {
+  blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
     const userId = request.user.id;
-    console.log("decodedToken.id: ", userId)
-    console.log("request.params.id: ",request.params.id)
     const blog = await Blog.findById(request.params.id);
     if(!blog)
       response.status(404).send({error:'not found'})
@@ -38,8 +37,9 @@ blogsRouter.get('/', async (request, response, next) => {
   blogsRouter.put('/:id', async (request, response) => {
     if (request.body.likes < 0 )
       throw new Error('bad request')
-    const result = await Blog.findByIdAndUpdate({_id:request.params.id}, {...request.body}, {new: true, runValidators: true});
-    console.log('RESULT',result);
+    const result = await Blog.findByIdAndUpdate(request.params.id, {...request.body}, {new: true, runValidators: true});
+    if(!result)
+      response.status(404).json({error: 'Blog not found'})
     response.status(200).json(result.body)
   })
   module.exports = blogsRouter;

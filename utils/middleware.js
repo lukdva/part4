@@ -26,17 +26,18 @@ const tokenExtractor = (req, res, next) => {
   if (auth && auth.toLowerCase().startsWith('bearer '))
     req.token = auth.substr(7);
   else
-    req.token = null
+    req.token = null;
   next();
 }
 
 const userExtractor = (req, res, next) => {
+  if(!req.token)
+    res.status(401).json({error: 'token is missing or invalid'});
   const decodedToken = jwt.verify(req.token, process.env.SECRET);
   const userId = decodedToken.id
+  
   if(!userId)
-  {
     res.status(401).json({error: 'token is missing or invalid'});
-  }
   req.user = decodedToken;
   next();
 }
